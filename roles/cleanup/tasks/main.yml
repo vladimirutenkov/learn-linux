@@ -1,0 +1,52 @@
+---
+#- name: Reboot
+#  shell: sleep 2 && reboot
+#  async: 1
+#  poll: 0
+#  ignore_errors: true
+#
+#- name: Wait for server to restart
+#  become: no
+#  local_action: wait_for
+#  args:
+#      host={{ ansible_host }}
+#      port={{ ansible_port }}
+#      delay=10
+#      timeout=300
+#
+#- name: Find old kernels
+#  command: rpm -aq kernel* | tail -n +2
+#  register: old_kernels
+#  changed_when: no
+#
+#- name: Remove old kernels
+#  command: dnf -y remove {{ item }}
+#  changed_when: no
+#  with_items:
+#    - "{{ old_kernels.stdout_lines }}"
+#  when: item | trim
+
+- name: Clean up dnf cache
+  command: dnf -y clean all --enablerepo=\*
+  register: dnf_result
+  changed_when: "'0 files removed' not in dnf_result.stdout"
+
+- name: Clean up /var/cache/dnf
+  command: rm -rf /var/cache/dnf/*
+  changed_when: no
+
+- name: Clean up /tmp
+  command: rm -rf /tmp/*
+  changed_when: no
+
+- name: Clear machine-id
+  command: rm -f /etc/machine-id && touch /etc/machine-id
+
+- name: Remove logs
+  command: find /var/log/ -name *.log -exec rm -f {} \;
+  changed_when: no
+
+- name: Zero out empty space
+  command: dd if=/dev/zero of=/empty bs=1M; sync; sleep 3; sync; rm -f /empty
+  failed_when: no
+  changed_when: no

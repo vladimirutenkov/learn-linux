@@ -1,0 +1,12 @@
+---
+- name: Disable THP for the current session
+  shell: echo never > /sys/kernel/mm/transparent_hugepage/{{ item }}
+  register: dnf_result
+  with_items:
+    - enabled
+    - defrag
+
+- name: Disable THP persistently
+  copy:
+    src: disable-thp.conf
+    dest: /etc/tmpfiles.d/

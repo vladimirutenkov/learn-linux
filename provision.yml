@@ -1,0 +1,16 @@
+---
+- name: Provision
+  hosts: all
+  gather_facts: no
+  become: yes
+  roles:
+    - pre-ansible
+    - swap
+    - alias
+    - docker
+    - docker-volume
+    - block-dev
+    - limits
+    - thp
+    - net
+    - misc

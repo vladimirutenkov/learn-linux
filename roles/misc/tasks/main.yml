@@ -1,0 +1,10 @@
+---
+- name: Install various packages
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - policycoreutils-python-utils
+    - libcap-ng-utils
+    - vim
+    - easy-rsa

@@ -1,0 +1,5 @@
+---
+- name: Disable io scheduler & set read-ahead
+  copy:
+    src: 60-xvdx.rules
+    dest: /etc/udev/rules.d/

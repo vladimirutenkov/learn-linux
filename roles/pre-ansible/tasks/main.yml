@@ -1,0 +1,14 @@
+---
+- name: Upgrade the system
+  raw: dnf -y --refresh upgrade
+  register: dnf_result
+  changed_when: "'Nothing to do' not in dnf_result.stdout"
+
+- name: Install minimal packages
+  raw: dnf -y install {{ item }}
+  register: dnf_result
+  changed_when: "'Nothing to do' not in dnf_result.stdout"
+  with_items:
+    - python
+    - python-dnf
+    - libselinux-python

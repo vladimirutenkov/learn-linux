@@ -1,0 +1,39 @@
+---
+# TODO: remove when https://github.com/ansible/ansible/pull/23411 is shipped
+- name: Check partition
+  parted:
+    device: /dev/sdb
+    state: info
+  register: part_check
+
+- name: Partition
+  parted:
+    device: /dev/sdb
+    number: 1
+    state: present
+    label: gpt
+  when: part_check.disk.table != "gpt"
+
+- name: Create xfs filesystem
+  filesystem:
+    fstype: xfs
+    dev: /dev/sdb1
+
+- name: Check if the "dbstore" volume already exists
+  shell: docker volume ls | grep -q dbstore
+  register: volume_find
+  failed_when: no
+  changed_when: no
+
+- name: Create the "dbstore" volume
+  shell: >
+    docker volume create --driver local \
+      --opt type=xfs                    \
+      --opt device=/dev/sdb1            \
+      --opt o=noatime,noexec            \
+      dbstore
+  when: volume_find.rc != 0
+
+
+#docker run --rm -v dbstore:/data/db -v dbstore:/data/configdb mongo
+#docker run --rm -v dbstore:/data redis

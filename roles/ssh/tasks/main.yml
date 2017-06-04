@@ -1,0 +1,34 @@
+---
+- name: Forbid root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+
+- name: Forbid password auth
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+
+- name: Use only public keys
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^AuthenticationMethods'
+    line: 'AuthenticationMethods publickey'
+
+- name: Change ssh port
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?Port \d+'
+    line: 'Port 22022'
+
+- name: Check if SSH port is already enabled in SELinux
+  shell: semanage port -l | grep ssh_port_t | grep 22022
+  register: ssh_sel_check
+  failed_when: no
+  changed_when: no
+
+- name: Enable new ssh port in SELinux
+  shell: semanage port -a -t ssh_port_t -p tcp 22022
+  when: ssh_sel_check.rc != 0

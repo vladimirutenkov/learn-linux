@@ -1,0 +1,2 @@
+ACTION=="add|change", KERNEL=="sd?",  ATTR{queue/scheduler}="noop", ATTR{bdi/read_ahead_kb}="16"
+ACTION=="add|change", KERNEL=="xvd?",  ATTR{queue/scheduler}="noop", ATTR{bdi/read_ahead_kb}="16"

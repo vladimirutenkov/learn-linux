@@ -1,0 +1,19 @@
+---
+- name: Define aliases
+  blockinfile:
+    path: "{{ item }}"
+    block: |
+      alias sudo='sudo '
+      alias ls='ls --color=auto --group-directories-first'
+      alias la='ls -lAhF'
+      alias cls='printf "\033c"'
+      alias cla='cls && la'
+      alias dcls='docker ps -a'
+      alias dcrm='docker rm --force $(docker ps -aq)'
+      alias dils='docker images -a'
+      alias dirm='docker rmi --force $(docker images -aq)'
+      alias dvls='docker volume ls'
+      alias dvrm='docker volume rm --force $(docker volume ls -q)'
+  with_items:
+    - /root/.bashrc
+    - /home/vagrant/.bashrc

@@ -1,0 +1,28 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox-ovf",
+      "source_path": ".box/box.ovf",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now",
+      "headless": true,
+      "guest_additions_mode": "disable"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "provision-box.yml",
+      "host_alias": "fedora",
+      "user": "vagrant"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": ".box/result.box"
+    }
+  ]
+}
