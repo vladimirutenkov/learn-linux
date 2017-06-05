@@ -1,5 +1,5 @@
-.idea
-.box
-.vagrant
-.packer_cache
-
+.idea/
+.box/
+.vagrant/
+packer_cache/
+*.retry
