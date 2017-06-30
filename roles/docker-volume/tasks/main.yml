@@ -12,7 +12,7 @@
     number: 1
     state: present
     label: gpt
-  when: part_check.disk.table != "gpt"
+  when: part_check.disk.table != "gpt" or not part_check.partitions
 
 - name: Create xfs filesystem
   filesystem:
